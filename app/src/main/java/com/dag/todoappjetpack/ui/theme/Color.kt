@@ -1,5 +1,7 @@
 package com.dag.todoappjetpack.ui.theme
 
+import androidx.compose.material.Colors
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 
 val Purple200 = Color(0xFFBB86FC)
@@ -11,3 +13,19 @@ val lowPriority = Color(0xFF00C980)
 val mediumPriority = Color(0xFFFFC114)
 val highPriority = Color(0xFFFF4646)
 val nonePriority = Color(0xFFFFFFFF)
+
+val Colors.taskItemBackgroundColor: Color
+    @Composable
+    get() = if (isLight) Color.White else Color.Gray
+
+val Colors.taskItemTextColor: Color
+    @Composable
+    get() = if (isLight) Color.DarkGray else Color.LightGray
+
+val Colors.topAppBarContentColor: Color
+    @Composable
+    get() = if (isLight) Color.White else Color.LightGray
+
+val Colors.topAppBarColor: Color
+    @Composable
+    get() = if (isLight) Purple500 else Color.Black
