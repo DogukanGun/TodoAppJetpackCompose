@@ -77,4 +77,8 @@ dependencies {
     //compose navigation
     def nav_version = "2.4.1"
     implementation "androidx.navigation:navigation-compose:$nav_version"
+
+    //datastore
+    implementation "androidx.datastore:datastore-core:1.0.0"
+
 }

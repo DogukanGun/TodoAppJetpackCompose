@@ -1,5 +1,6 @@
 package com.dag.todoappjetpack.navigation.destinations
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.navigation.NavGraphBuilder
@@ -11,6 +12,7 @@ import com.dag.todoappjetpack.ui.screens.task.TaskScreen
 import com.dag.todoappjetpack.ui.viewmodels.TodoVM
 import com.dag.todoappjetpack.util.Action
 import com.dag.todoappjetpack.util.Constant
+import com.dag.todoappjetpack.util.toAction
 
 
 fun NavGraphBuilder.listComposable(
@@ -22,7 +24,12 @@ fun NavGraphBuilder.listComposable(
         arguments = listOf(navArgument(Constant.LIST_SCREEN_ARGUMENT_KEY){
             type = NavType.StringType
         })
-    ){
+    ){ navBackStackEntry ->
+        val action = navBackStackEntry.arguments?.getString(Constant.LIST_SCREEN_ARGUMENT_KEY).toAction()
+        
+        LaunchedEffect(key1 = action){
+            viewModel.action.value = action
+        }
         ListScreen(
             navigateToTaskScreen = navigateToTaskScreen,
             viewModel = viewModel
@@ -44,8 +51,15 @@ fun NavGraphBuilder.taskComposable(
         val taskId = navBackStackEntry.arguments!!.getInt(Constant.TASK_SCREEN_ARGUMENT_KEY)
         viewModel.getSelectedTask(taskId)
         val selectedTask by viewModel.selectedTask.collectAsState()
+        LaunchedEffect(key1 = selectedTask){
+            if (selectedTask != null || taskId == -1){
+                viewModel.updateTaskTask(selectedTask)
+            }
+        }
+
         TaskScreen(
             selectedTask = selectedTask,
+            viewModel = viewModel,
             navigateToListScreen = navigateToListScreen
         )
     }

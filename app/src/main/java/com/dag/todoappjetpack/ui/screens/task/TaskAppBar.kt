@@ -4,9 +4,10 @@ import android.app.Notification
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
+import com.dag.todoappjetpack.component.DisplayAlertDialog
 import com.dag.todoappjetpack.data.model.Priority
 import com.dag.todoappjetpack.data.model.TodoTask
 import com.dag.todoappjetpack.ui.theme.topAppBarColor
@@ -72,12 +73,32 @@ fun ExistingTaskAppBar(
         },
         backgroundColor = MaterialTheme.colors.topAppBarColor,
         actions = {
-            DeleteAction(onDeleteClicked = navigateToListScreen)
-            UpdateAction(onUpdateClicked = navigateToListScreen)
+            ExistingTaskAppBarActions(
+                selectedTask = selectedTask,
+                navigateToListScreen = navigateToListScreen
+            )
         }
     )
 }
 
+@Composable
+fun ExistingTaskAppBarActions(
+    selectedTask: TodoTask,
+    navigateToListScreen: (Action) -> Unit
+){
+    var openDialog by remember { mutableStateOf(false) }
+    DisplayAlertDialog(
+        title = "Delete Task",
+        message = "Are You Sure ?",
+        openDialog = openDialog,
+        closeDialog = { openDialog = false },
+        okayButtonClicked = { navigateToListScreen(Action.DELETE)}
+    )
+    DeleteAction(onDeleteClicked = {
+        openDialog = true
+    })
+    UpdateAction(onUpdateClicked = navigateToListScreen)
+}
 @Composable
 fun CloseAction(
     onCloseClicked : (Action) -> Unit

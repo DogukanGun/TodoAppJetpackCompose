@@ -19,30 +19,73 @@ import com.dag.todoappjetpack.data.model.Priority
 import com.dag.todoappjetpack.data.model.TodoTask
 import com.dag.todoappjetpack.ui.theme.*
 import com.dag.todoappjetpack.util.RequestState
+import com.dag.todoappjetpack.util.SearchBarState
 
 
 @Composable
 fun ListContent(
-    tasks:RequestState<List<TodoTask>>,
+    allTasks:RequestState<List<TodoTask>>,
+    lowPriorityTaskList:List<TodoTask>,
+    highPriorityTaskList:List<TodoTask>,
+    priorityState: RequestState<Priority>,
+    searchTask:RequestState<List<TodoTask>>,
+    searchAppBarState: SearchBarState,
     navigateToTaskScreen: (taskId:Int) -> Unit
 ){
-    when(tasks){
-        is RequestState.Success ->{
-            if (tasks.data.isEmpty()){
-                EmptyContent()
-            }else{
-                DisplayListContent(
-                    tasks = tasks.data,
+    if (priorityState is RequestState.Success){
+        when{
+            searchAppBarState == SearchBarState.TRIGGERED ->{
+                if (searchTask is RequestState.Success){
+                    HandleListContent(
+                        task = searchTask.data,
+                        navigateToTaskScreen = navigateToTaskScreen
+                    )
+                }
+            }
+            priorityState.data == Priority.NONE ->{
+                if (allTasks is RequestState.Success){
+                    HandleListContent(
+                        task = allTasks.data,
+                        navigateToTaskScreen = navigateToTaskScreen
+                    )
+                }
+            }
+            priorityState.data == Priority.LOW ->{
+                HandleListContent(
+                    task = lowPriorityTaskList,
+                    navigateToTaskScreen = navigateToTaskScreen
+                )
+            }
+            priorityState.data == Priority.HIGH ->{
+                HandleListContent(
+                    task = highPriorityTaskList,
                     navigateToTaskScreen = navigateToTaskScreen
                 )
             }
         }
-        RequestState.Loading ->{
-
-        }
     }
 
 
+    if (searchAppBarState == SearchBarState.TRIGGERED){
+
+    }else{
+
+    }
+}
+
+@Composable
+fun HandleListContent(
+    task:List<TodoTask>,
+    navigateToTaskScreen: (taskId: Int) -> Unit
+){
+    if (task.isEmpty()){
+        EmptyContent()
+    }else{
+        DisplayListContent(
+            tasks = task,
+            navigateToTaskScreen = navigateToTaskScreen
+        )
+    }
 }
 
 @Composable

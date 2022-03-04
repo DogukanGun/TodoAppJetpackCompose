@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
+import com.dag.todoappjetpack.component.DisplayAlertDialog
 import com.dag.todoappjetpack.component.PriorityItem
 import com.dag.todoappjetpack.data.model.Priority
 import com.dag.todoappjetpack.ui.theme.*
@@ -41,8 +42,10 @@ fun ListAppBar(
                         SearchBarState.OPENED
                 },
                 onSortClicked = {
+                    viewModel.persistSortingState(it)
                 },
-                onDeleteClicked = {
+                onDeleteAllClicked = {
+                    viewModel.deleteAllTask()
                 }
             )
         }
@@ -56,7 +59,9 @@ fun ListAppBar(
                         SearchBarState.CLOSED
                     viewModel.searchTextState.value = ""
                 },
-                onSearchClick = {},
+                onSearchClick = {
+                    viewModel.searchAllTasks(it)
+                },
                 text = searchTextState
             )
         }
@@ -68,7 +73,7 @@ fun ListAppBar(
 fun DefaultListAppBar(
     onSearchClick: () -> Unit,
     onSortClicked: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ){
     TopAppBar(
         contentColor = MaterialTheme.colors.topAppBarContentColor,
@@ -79,7 +84,7 @@ fun DefaultListAppBar(
             ListAppBarActions(
                 onSearchClick = onSearchClick,
                 onSortClicked = onSortClicked,
-                onDeleteClicked = onDeleteClicked
+                onDeleteAllClicked = onDeleteAllClicked
             )
         },
         backgroundColor = MaterialTheme.colors.topAppBarColor
@@ -90,11 +95,20 @@ fun DefaultListAppBar(
 fun ListAppBarActions(
     onSearchClick: () -> Unit,
     onSortClicked: (Priority) -> Unit,
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ){
+    var openDialog by remember { mutableStateOf(false) }
+
+    DisplayAlertDialog(
+        title = "Delete All Tasks",
+        message =  "Are you sure ?",
+        openDialog = openDialog,
+        closeDialog = { openDialog = false },
+        okayButtonClicked = { onDeleteAllClicked() }
+    )
     SearchAppBar(onSearchClick = onSearchClick)
     SortAppBar(onSortClicked = onSortClicked)
-    DeleteAllActions(onDeleteClicked = onDeleteClicked)
+    DeleteAllActions(onDeleteAllClicked = { openDialog = true })
 }
 
 @Composable
@@ -114,7 +128,7 @@ fun SearchAppBar(
 
 @Composable
 fun DeleteAllActions(
-    onDeleteClicked: () -> Unit
+    onDeleteAllClicked: () -> Unit
 ){
     var extended by remember { mutableStateOf(false) }
     IconButton(
@@ -132,7 +146,7 @@ fun DeleteAllActions(
             DropdownMenuItem(
                 onClick = {
                     extended = false
-                    onDeleteClicked()
+                    onDeleteAllClicked()
                 }
             ) {
                 Text(
@@ -170,18 +184,18 @@ fun SortAppBar(
             DropdownMenuItem(
                 onClick = {
                     extended = false
-                    onSortClicked(Priority.MEDIUM)
-                }
-            ) {
-                PriorityItem(priority = Priority.MEDIUM)
-            }
-            DropdownMenuItem(
-                onClick = {
-                    extended = false
                     onSortClicked(Priority.HIGH)
                 }
             ) {
                 PriorityItem(priority = Priority.HIGH)
+            }
+            DropdownMenuItem(
+                onClick = {
+                    extended = false
+                    onSortClicked(Priority.NONE)
+                }
+            ) {
+                PriorityItem(priority = Priority.NONE)
             }
         }
     }
@@ -286,6 +300,6 @@ fun DefaultListAppBarPreview(){
     DefaultListAppBar(
         onSearchClick = {},
         onSortClicked = {},
-        onDeleteClicked = {}
+        onDeleteAllClicked = {}
     )
 }

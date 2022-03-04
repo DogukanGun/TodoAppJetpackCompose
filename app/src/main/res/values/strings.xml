@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">TodoAppJetpack</string>
     <string name="fab_button_text">Add Task</string>
-    <string name="delete_tab_bar">Delete</string>
+    <string name="delete_tab_bar">Delete All</string>
     <string name="empty_task">No task</string>
 </resources>
