@@ -12,7 +12,11 @@ val Teal200 = Color(0xFF03DAC5)
 val lowPriority = Color(0xFF00C980)
 val mediumPriority = Color(0xFFFFC114)
 val highPriority = Color(0xFFFF4646)
-val nonePriority = Color(0xFFFFFFFF)
+val nonePriority = Teal200
+
+val Colors.splashScreenBackground: Color
+    @Composable
+    get() = if (isLight) Purple700 else Color.Gray
 
 val Colors.taskItemBackgroundColor: Color
     @Composable

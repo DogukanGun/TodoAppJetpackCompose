@@ -152,7 +152,6 @@ class TodoVM @Inject constructor(
             else ->{
             }
         }
-        this.action.value = Action.NO_ACTION
     }
 
     fun getSelectedTask(taskId:Int){

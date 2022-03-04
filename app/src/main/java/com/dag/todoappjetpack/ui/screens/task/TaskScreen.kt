@@ -2,9 +2,12 @@ package com.dag.todoappjetpack.ui.screens.task
 
 import android.content.Context
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
+import androidx.activity.OnBackPressedDispatcher
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
 import androidx.compose.material.Scaffold
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.platform.LocalContext
 import com.dag.todoappjetpack.data.model.Priority
 import com.dag.todoappjetpack.data.model.TodoTask
@@ -22,15 +25,13 @@ fun TaskScreen(
     val todoTaskDescription:String by viewModel.description
     val todoTaskPriority:Priority by viewModel.priority
 
-    val context = LocalContext.current
-
-    Scaffold(
+    BackHandler {
+        navigateToListScreen(Action.NO_ACTION)
+    }
+     Scaffold(
         topBar = {
             TaskAppBar(
                 navigateToListScreen = { action ->
-                    if (action != Action.NO_ACTION){
-                        displayToastMessage(context)
-                    }
                     navigateToListScreen(action)
                 },
                 selectedTask = selectedTask
@@ -64,3 +65,4 @@ fun displayToastMessage(
         Toast.LENGTH_LONG
     ).show()
 }
+ 

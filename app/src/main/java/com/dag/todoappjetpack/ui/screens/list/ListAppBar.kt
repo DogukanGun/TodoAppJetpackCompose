@@ -25,7 +25,6 @@ import com.dag.todoappjetpack.data.model.Priority
 import com.dag.todoappjetpack.ui.theme.*
 import com.dag.todoappjetpack.ui.viewmodels.TodoVM
 import com.dag.todoappjetpack.util.SearchBarState
-import com.dag.todoappjetpack.util.TrailingItemState
 
 
 @Composable
@@ -208,7 +207,6 @@ fun SearchAppBar(
     onClosedClick: () -> Unit,
     onSearchClick: (String) -> Unit
 ){
-    var trailingItemState by remember { mutableStateOf(TrailingItemState.READY_DELETE) }
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -248,19 +246,10 @@ fun SearchAppBar(
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        when(trailingItemState){
-                            TrailingItemState.READY_DELETE ->{
-                                onTextChange("")
-                                trailingItemState = TrailingItemState.READY_CLOSE
-                            }
-                            TrailingItemState.READY_CLOSE ->{
-                                if (text.isNotEmpty()){
-                                    onTextChange("")
-                                }else{
-                                    onClosedClick()
-                                    trailingItemState = TrailingItemState.READY_DELETE
-                                }
-                            }
+                        if (text.isEmpty()){
+                            onClosedClick()
+                        }else{
+                            onTextChange("")
                         }
                     }
                 ) {

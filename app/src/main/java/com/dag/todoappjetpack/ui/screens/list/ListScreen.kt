@@ -18,6 +18,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun ListScreen(
+    action: Action,
     navigateToTaskScreen: (Int) -> Unit,
     viewModel: TodoVM
 ){
@@ -25,7 +26,9 @@ fun ListScreen(
         viewModel.getAllTasks()
         viewModel.readSortState()
     }
-    val action by viewModel.action
+    LaunchedEffect(key1 = action){
+        viewModel.handleAction(action = action)
+    }
     val sortState by viewModel.sortState.collectAsState()
     val lowPriorityTaskList by viewModel.lowPriorityTasks.collectAsState()
     val highPriorityTaskList by viewModel.highPriorityTasks.collectAsState()
@@ -37,7 +40,7 @@ fun ListScreen(
 
     DisplaySnackbar(
         scaffoldState = scaffoldState,
-        handleDatabaseAction = { viewModel.handleAction(action = action) },
+        onComplete = { viewModel.action.value = it },
         taskTitle = viewModel.title.value,
         action = action,
         onUndoClicked = {
@@ -62,7 +65,12 @@ fun ListScreen(
                 navigateToTaskScreen = navigateToTaskScreen,
                 lowPriorityTaskList = lowPriorityTaskList,
                 highPriorityTaskList = highPriorityTaskList,
-                priorityState = sortState
+                priorityState = sortState,
+                onSwipeToDelete = { action,task ->
+                    viewModel.action.value = action
+                    viewModel.updateTaskTask(task)
+                    scaffoldState.snackbarHostState.currentSnackbarData?.dismiss()
+                }
             )
         },
         floatingActionButton = {
@@ -87,13 +95,11 @@ fun ListFabButton(
 @Composable
 fun DisplaySnackbar(
     scaffoldState:ScaffoldState,
-    handleDatabaseAction: () -> Unit,
+    onComplete: (Action) -> Unit,
     onUndoClicked: (Action) -> Unit,
     taskTitle: String,
     action: Action
 ){
-    handleDatabaseAction()
-
     val scope = rememberCoroutineScope()
     LaunchedEffect(key1 = action){
         if (action != Action.NO_ACTION){
@@ -108,6 +114,7 @@ fun DisplaySnackbar(
                     onUndoClicked = onUndoClicked
                 )
             }
+            onComplete(Action.NO_ACTION)
         }
     }
 

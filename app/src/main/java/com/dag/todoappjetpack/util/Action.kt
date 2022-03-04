@@ -1,5 +1,7 @@
 package com.dag.todoappjetpack.util
 
+import java.lang.Exception
+
 enum class Action {
     ADD,
     DELETE,
@@ -10,27 +12,9 @@ enum class Action {
 }
 
 fun String?.toAction(): Action {
-    return when{
-        this == "ADD" -> {
-            Action.ADD
-        }
-        this == "DELETE" -> {
-            Action.DELETE
-        }
-        this == "UPDATE" -> {
-            Action.UPDATE
-        }
-        this == "DELETE_ALL" -> {
-            Action.DELETE_ALL
-        }
-        this == "UNDO" -> {
-            Action.UNDO
-        }
-        this == "NO_ACTION" -> {
-            Action.NO_ACTION
-        }
-        else ->{
-            Action.NO_ACTION
-        }
+    return try{
+        if (this.isNullOrEmpty()) Action.NO_ACTION else Action.valueOf(this)
+    }catch (e:Exception){
+        Action.NO_ACTION
     }
 }

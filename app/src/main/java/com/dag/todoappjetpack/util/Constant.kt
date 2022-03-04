@@ -5,6 +5,7 @@ object Constant {
     const val DATABASE_TABLE = "todo_table"
     const val DATABASE_NAME = "todo_database"
 
+    const val SPLASH_SCREEN = "splash"
     const val LIST_SCREEN = "list/{action}"
     const val TASK_SCREEN = "task/{task}"
 
@@ -13,4 +14,6 @@ object Constant {
 
     const val LIST_SCREEN_ARGUMENT_KEY = "action"
     const val TASK_SCREEN_ARGUMENT_KEY = "task"
+
+    const val SPLASH_SCREEN_DELAY = 3000L
 }
